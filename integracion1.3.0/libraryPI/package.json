@@ -1,0 +1,15 @@
+{
+  "name": "integration-pos-service",
+  "version": "1.2.4",
+  "description": "Una librería para integración de cajas con Node.js",
+  "main": "IntegrationPos.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "integracion",
+    "pos"
+  ],
+  "author": "wquispe - REDENLACE",
+  "license": "MIT"
+}

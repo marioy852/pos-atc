@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pantalla de Kiosko</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="client-selection">
+                <label for="client">Seleccione Dispositivo</label>
+                <div style="display: flex; justify-content: space-between;">
+                    <select id="client" style="width: 180px">
+                        <option value="POS01">Device 1</option>
+                        <option value="POS02">Device 2</option>
+                    </select>
+                    <button class="cancel-button" onclick="clearCart()">CANCELAR</button>
+                </div>
+            </div>
+            <div class="cart">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Productos</th>
+                            <th>Pre.Uni</th>
+                            <th>Cant</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-body">
+
+                    </tbody>
+                </table>
+                <div class="totals">
+                    <div class="total-row">
+                        <span>Sub Total:</span>
+                        <span id="sub-total">Bs 0</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Descuento:</span>
+                        <span id="discount">Bs 0</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Total:</span>
+                        <span id="total">Bs 0</span>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <label>Seleccione Tipo Pago</label>
+                    <div style="display: flex; justify-content: space-between;">
+                        <button class="payment-button-size" onclick="pay('chip')">
+                            <img src="/card.png" alt="CHIP">
+                        </button>
+                        <button class="payment-button-size" onclick="pay('ctl')">
+                            <img src="/ctl.png" alt="CTL">
+                        </button>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between;">
+                        <input style="width: 180px;padding:8px 4px" name="reference" type="text"
+                            placeholder="reference">
+                        <button class="payment-button" onclick="anular()">ANULACION</button>
+                    </div>
+                    <div>
+                        <button style="float: right;" class="cancel-button" onclick="cierrelote()">CIERRE DE
+                            LOTE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="right-panel" style="display: flex; justify-content: space-between;">
+            <div>
+                <label><strong>LISTA DE PRODUCTO</strong></label>
+                <div class="products">
+                    <button class="product-button" onclick="addProduct('Café', 10.00)">Café <br> Bs 10.00</button>
+                    <button class="product-button" onclick="addProduct('Chocolate', 13.10)">Chocolate <br>
+                        Bs 13.10</button>
+                </div>
+            </div>
+            <div>
+                <span> Resultados: <strong id="dispositivo"></strong> </span>
+                <textarea rows="15" id="message" class="message">-----------------------------</textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+
+        function addProduct(name, price) {
+            let product = cart.find(p => p.name === name);
+            if (product) {
+                product.quantity++;
+                product.total += price;
+            } else {
+                cart.push({
+                    name,
+                    price,
+                    quantity: 1,
+                    total: price
+                });
+            }
+            updateCart();
+        }
+
+        function updateCart() {
+            let cartBody = document.getElementById('cart-body');
+            cartBody.innerHTML = '';
+            let subTotal = 0;
+            cart.forEach(product => {
+                subTotal += product.total;
+                cartBody.innerHTML += `
+          <tr>
+            <td>${product.name}</td>
+            <td>Bs ${product.price.toFixed(2)}</td>
+            <td>${product.quantity}</td>
+            <td>Bs ${product.total.toFixed(2)}</td>
+          </tr>
+        `;
+            });
+            document.getElementById('sub-total').textContent = `Bs ${subTotal.toFixed(2)}`;
+            document.getElementById('total').textContent = `Bs ${subTotal.toFixed(2)}`;
+        }
+
+        function clearCart() {
+            cart = [];
+            updateCart();
+        }
+        async function pay(typePay) {
+            document.getElementById("dispositivo").innerHTML = "";
+            const device = document.getElementById('client').value;
+            const importe = calcularImporteTotal();
+            try {
+                if (importe > 0) {
+                    document.getElementById("dispositivo").innerHTML = typePay;
+                    const response = await fetch(`/pago`,{
+                        method: "POST",
+                        headers: {
+                            'Content-Type' : 'application/json'
+                        },
+                        body: JSON.stringify({
+                            device: device,
+                            typePay: typePay,
+                            importe: importe
+                        })
+                    });
+                    if (!response.ok) {
+                        throw new Error('Error al procesar el pago');
+                    }
+                    const data = await response.json();
+                    if (data.status == "error") {
+                        alert(data.message);
+                        document.getElementById("message").innerHTML = data.message;
+                    } else {
+                        document.getElementById("message").innerHTML = JSON.stringify(data);
+                        alert("Transaccion exitosa");
+                    }
+                } else {
+                    alert('Monto invalido');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al procesar el pago');
+            }
+        }
+
+        async function anular() {
+            document.getElementById("dispositivo").innerHTML = "";
+            const device = document.getElementById('client').value;
+            const reference = document.getElementsByName('reference')[0].value;
+            try {
+                document.getElementById("dispositivo").innerHTML = "Anulación";
+                const response = await fetch(`/anular/${device}/${reference}`);
+                if (!response.ok) {
+                    throw new Error('Error al anular la transacción');
+                }
+                const data = await response.json();
+
+                if (data.status == "error") {
+                    alert(data.message);
+                    document.getElementById("message").innerHTML = data.message;
+                } else {
+                    document.getElementById("message").innerHTML = JSON.stringify(data.message);
+                    alert("Anulacion exitosa");
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al anular la transacción');
+            }
+        }
+
+        async function cierrelote() {
+            document.getElementById("dispositivo").innerHTML = "";
+            const device = document.getElementById('client').value;
+            try {
+                document.getElementById("dispositivo").innerHTML = "Cierre de lote";
+                const response = await fetch(`/cerrar/${device}`);
+                if (!response.ok) {
+                    throw new Error('Error al cerrar el lote');
+                }
+                const data = await response.json();
+
+                if (data.status == "error") {
+                    alert(data.message);
+                    document.getElementById("message").innerHTML = data.message;
+                } else {
+                    document.getElementById("message").innerHTML = JSON.stringify(data.message);
+                    alert("Cierre de lote exitosa");
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al cerrar el lote');
+            }
+        }
+
+        async function inicializar() {
+            document.getElementById("dispositivo").innerHTML = "";
+            const device = document.getElementById('client').value;
+            try {
+                document.getElementById("dispositivo").innerHTML = "Inicializacion";
+                const response = await fetch(`/initialize/${device}`);
+                if (!response.ok) {
+                    throw new Error('Error al inicializar');
+                }
+                const data = await response.json();
+                document.getElementById("message").innerHTML = data.message;
+                alert(data.message);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al inicializar');
+            }
+        }
+
+        function calcularImporteTotal() {
+            let total = 0;
+            cart.forEach(product => {
+                total += product.total;
+            });
+            return total;
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="flujo-actual" name="Flujo actual">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="Flujo ACTUAL de integración POS (genesisweb-ui → agente local :3000 → terminal)" style="text;html=1;fontSize=16;fontStyle=1;align=left;" vertex="1" parent="1"><mxGeometry x="20" y="10" width="900" height="30" as="geometry"/></mxCell>
+
+        <mxCell id="l1" value="Navegador · genesisweb-ui" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="20" y="50" width="270" height="760" as="geometry"/></mxCell>
+        <mxCell id="l2" value="Agente local (localhost:3000)" style="swimlane;startSize=30;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="330" y="50" width="270" height="760" as="geometry"/></mxCell>
+        <mxCell id="l3" value="Terminal POS (IP fija)" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="640" y="50" width="270" height="760" as="geometry"/></mxCell>
+        <mxCell id="l4" value="Genesis (backend)" style="swimlane;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1"><mxGeometry x="950" y="50" width="270" height="760" as="geometry"/></mxCell>
+
+        <mxCell id="a1" value="Ajustes › POS: IP del terminal guardada en localStorage (pos_ip)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="45" y="100" width="220" height="60" as="geometry"/></mxCell>
+        <mxCell id="a2" value="Venta: idTrade desde entities2 (medPag=TC, llave=codigo). Si es 0/vacío: no llama al POS" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="45" y="190" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="a3" value="GET /chipmulti/{ip}/{monto}/{idTrade}&#xa;(sin timeout propio; límite global 60 s)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1"><mxGeometry x="45" y="290" width="220" height="60" as="geometry"/></mxCell>
+        <mxCell id="b1" value="Recibe la petición, usa credenciales del comercio (multi-comercio) y habla con el terminal por IP" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="355" y="290" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="c1" value="Procesa tarjeta (chip/ctl) con el cliente" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="665" y="290" width="220" height="60" as="geometry"/></mxCell>
+        <mxCell id="b2" value="Devuelve PosAtcResponse (codRespuesta, numRecibo, codAutoriz, …)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="355" y="400" width="220" height="60" as="geometry"/></mxCell>
+        <mxCell id="a4" value="codRespuesta == '00'?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="60" y="390" width="190" height="90" as="geometry"/></mxCell>
+        <mxCell id="a4n" value="No: posStatus = DECLINED, muestra «POS payment declined»" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1"><mxGeometry x="45" y="510" width="220" height="50" as="geometry"/></mxCell>
+        <mxCell id="a5" value="Sí: posStatus = ACCEPTED. payCartPOS con datosForPag = campos de PosAtcResponse" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="45" y="590" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="d1" value="POST pagar-cuenta (forPag=TC, datosForPag)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="975" y="590" width="220" height="60" as="geometry"/></mxCell>
+        <mxCell id="a6" value="Polling getTransactionStatus (6 × 5 s). F → ACCEPTED, R → DECLINED. Hasta 3 reintentos a Genesis sin recobrar en el POS" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1"><mxGeometry x="45" y="690" width="220" height="80" as="geometry"/></mxCell>
+        <mxCell id="a7" value="Anulación: GET /anulacionmulti/{ip}/{recibo}/{idTrade}&#xa;Cierre: GET /cierremulti/{ip}/1/{idTrade}&#xa;Idéntico recorrido UI → agente → POS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1"><mxGeometry x="355" y="690" width="220" height="80" as="geometry"/></mxCell>
+        <mxCell id="n1" value="Sin idempotencia: si el POS aprueba y el navegador pierde la respuesta, la UI marca DECLINED" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="665" y="690" width="220" height="80" as="geometry"/></mxCell>
+
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="a1" target="a2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="a2" target="a3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="a3" target="b1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="b1" target="c1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="c1" target="b2"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="775" y="430"/></Array></mxGeometry></mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="b2" target="a4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e7" value="No" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="a4" target="a4n"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e8" value="Sí" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="a4" target="a5"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="285" y="435"/><mxPoint x="285" y="625"/></Array></mxGeometry></mxCell>
+        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="a5" target="d1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="590" y="625"/><mxPoint x="590" y="620"/></Array></mxGeometry></mxCell>
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="a5" target="a6"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

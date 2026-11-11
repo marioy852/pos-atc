@@ -1,0 +1,7 @@
+node_modules
+logs
+devices.json
+.env
+installer/staging
+installer/dist
+installer/cache

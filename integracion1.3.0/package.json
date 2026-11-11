@@ -1,0 +1,21 @@
+{
+    "name": "integration_pos",
+    "version": "1.3.0",
+    "description": "IntegrationPos",
+    "main": "server",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "nodemon index.js",
+        "start": "node index.js"
+    },
+    "author": "Redenlace",
+    "license": "ISC",
+    "dependencies": {
+        "ejs": "^6.0.1",
+        "dotenv": "^17.4.2",
+        "express": "^4.19.2",
+        "net": "^1.0.2",
+        "nodemon": "^3.1.14",
+        "yup": "^1.7.1"
+    }
+}

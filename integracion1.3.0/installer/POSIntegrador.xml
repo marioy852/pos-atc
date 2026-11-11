@@ -1,0 +1,18 @@
+<service>
+  <id>POSIntegrador</id>
+  <name>POS Integrador</name>
+  <description>Integrador entre el terminal POS y genesisweb de esta caja.</description>
+  <executable>%BASE%\node\node.exe</executable>
+  <arguments>index.js</arguments>
+  <workingdirectory>%BASE%</workingdirectory>
+  <startmode>Automatic</startmode>
+  <onfailure action="restart" delay="10 sec"/>
+  <onfailure action="restart" delay="30 sec"/>
+  <onfailure action="restart" delay="60 sec"/>
+  <resetfailure>1 hour</resetfailure>
+  <logpath>%BASE%\logs</logpath>
+  <log mode="roll-by-size">
+    <sizeThreshold>5120</sizeThreshold>
+    <keepFiles>5</keepFiles>
+  </log>
+</service>

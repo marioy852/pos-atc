@@ -1,0 +1,44 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="flujo-nuevo" name="Flujo nuevo">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="Flujo NUEVO (Plan C): genesisweb-ui → gateway local :7392 → terminal POS :15455" style="text;html=1;fontSize=16;fontStyle=1;align=left;" vertex="1" parent="1"><mxGeometry x="20" y="10" width="900" height="30" as="geometry"/></mxCell>
+        <mxCell id="leg1" value="Cambia" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1"><mxGeometry x="940" y="12" width="80" height="26" as="geometry"/></mxCell>
+        <mxCell id="leg2" value="Sin cambio" style="rounded=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1"><mxGeometry x="1030" y="12" width="90" height="26" as="geometry"/></mxCell>
+
+        <mxCell id="pc" value="PC de la caja (Windows) — gateway como servicio" style="swimlane;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;" vertex="1" parent="1"><mxGeometry x="10" y="50" width="600" height="900" as="geometry"/></mxCell>
+        <mxCell id="l1" value="Navegador · genesisweb-ui" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="25" y="90" width="270" height="840" as="geometry"/></mxCell>
+        <mxCell id="l2" value="Gateway (API 127.0.0.1:7392 · TCP 0.0.0.0:15455)" style="swimlane;startSize=30;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="320" y="90" width="270" height="840" as="geometry"/></mxCell>
+        <mxCell id="l3" value="Terminal POS (IP fija)" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="650" y="50" width="270" height="900" as="geometry"/></mxCell>
+        <mxCell id="l4" value="Genesis (backend)" style="swimlane;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1"><mxGeometry x="960" y="50" width="270" height="900" as="geometry"/></mxCell>
+
+        <mxCell id="a1" value="Ajustes › POS: IP del terminal (pos_ip). Descarga el instalador del gateway; terminal configurado a IP-del-PC:15455" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1"><mxGeometry x="50" y="140" width="220" height="80" as="geometry"/></mxCell>
+        <mxCell id="a2" value="Venta: idTrade ya no se envía al POS (decidir qué validación queda)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1"><mxGeometry x="50" y="250" width="220" height="60" as="geometry"/></mxCell>
+        <mxCell id="a3" value="PosAtcApiService (URL base en APP_CONFIG):&#xa;POST /pago {device, typePay:'chip', importe}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1"><mxGeometry x="50" y="340" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="b1" value="Valida el cuerpo y resuelve el dispositivo (etiqueta de devices.json o IP). Bloquea si hay otra operación: 409 device_busy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1"><mxGeometry x="345" y="340" width="220" height="80" as="geometry"/></mxCell>
+        <mxCell id="c1" value="Procesa tarjeta CHIP/CTL por el socket que el terminal abrió hacia el gateway (reconecta cada 2 min; heartbeat 0x05)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1"><mxGeometry x="675" y="340" width="220" height="80" as="geometry"/></mxCell>
+        <mxCell id="b2" value="Responde {status, message, data:[{name,value}]} o error 503 pos_connection_lost / 504 operation_timeout (40 s)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1"><mxGeometry x="345" y="460" width="220" height="80" as="geometry"/></mxCell>
+        <mxCell id="m1" value="Mapper nuevo → PosAtcResponse (authCode→codAutoriz, receiptNumber→numRecibo, responseCode→codRespuesta, …). Conserva las claves para datosForPag" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1"><mxGeometry x="50" y="460" width="220" height="90" as="geometry"/></mxCell>
+        <mxCell id="a4" value="status == success?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="65" y="590" width="190" height="90" as="geometry"/></mxCell>
+        <mxCell id="a4n" value="No: DECLINED. 409 → hay otra operación; 503 → conexión caída; 504 → estado incierto: verificar voucher (receiptNumber) antes de reintentar" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1"><mxGeometry x="50" y="710" width="220" height="100" as="geometry"/></mxCell>
+        <mxCell id="a5" value="Sí: ACCEPTED. payCartPOS con datosForPag" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1"><mxGeometry x="50" y="840" width="220" height="50" as="geometry"/></mxCell>
+        <mxCell id="d1" value="POST pagar-cuenta + polling de estado + 3 reintentos a Genesis (sin cambio)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1"><mxGeometry x="985" y="840" width="220" height="60" as="geometry"/></mxCell>
+        <mxCell id="a7" value="Anulación: POST /anular {device, reference}&#xa;Cierre: POST /cerrar {device}&#xa;buscarCredenciales: sin equivalente (pendiente de decidir)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1"><mxGeometry x="345" y="580" width="220" height="100" as="geometry"/></mxCell>
+        <mxCell id="n1" value="Riesgos a verificar: HTTPS → http://localhost (permiso de red local del navegador) · CORS_ORIGINS para desarrollo · sin idempotencia en el terminal" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="345" y="720" width="220" height="100" as="geometry"/></mxCell>
+
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="a1" target="a2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="a2" target="a3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" value="HTTP localhost" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="a3" target="b1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" value="TCP" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="b1" target="c1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="c1" target="b2"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="785" y="500"/></Array></mxGeometry></mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="b2" target="m1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="m1" target="a4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e8" value="No" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="a4" target="a4n"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e9" value="Sí" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="a4" target="a5"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="290" y="635"/><mxPoint x="290" y="865"/></Array></mxGeometry></mxCell>
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" parent="1" source="a5" target="d1"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="620" y="865"/><mxPoint x="620" y="870"/></Array></mxGeometry></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

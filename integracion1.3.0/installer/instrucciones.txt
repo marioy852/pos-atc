@@ -1,0 +1,19 @@
+﻿INSTALACION DEL INTEGRADOR POS EN EL PC DE LA CAJA
+
+Antes de continuar, verifique lo siguiente:
+
+1. Este PC tiene IP fija o una reserva DHCP. El terminal POS guarda la IP de este PC, y si cambia, deja de conectar.
+2. Tiene a mano los datos del terminal de esta caja: un nombre (por ejemplo POS01), su IP fija y el puerto del POS acordado (por defecto 15455).
+3. Esta ejecutando el instalador como administrador.
+
+Que hace este instalador:
+
+- Copia el integrador y su propio Node, sin depender de lo instalado en el PC.
+- Guarda su configuracion en los archivos .env y devices.json.
+- Registra el servicio de Windows "POSIntegrador" con arranque automatico.
+- Crea una regla de firewall que permite el puerto del POS solo desde la IP del terminal.
+- Deja un acceso directo al kiosk en el escritorio.
+
+Despues de instalar, configure el terminal POS con la IP de ESTE PC y el puerto del POS, y reinicielo. El terminal puede tardar hasta 2 minutos en conectar.
+
+Para cambiar la configuracion mas adelante, vuelva a ejecutar el instalador e ingrese los nuevos valores.
