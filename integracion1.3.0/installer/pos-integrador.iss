@@ -36,14 +36,10 @@ Source: "POSIntegrador.xml"; DestDir: "{app}"; Flags: ignoreversion
 [Dirs]
 Name: "{app}\logs"
 
-[Icons]
-Name: "{commondesktop}\POS Integrador (kiosk)"; Filename: "{app}\kiosk.url"
-
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\logs"
 Type: files; Name: "{app}\.env"
 Type: files; Name: "{app}\devices.json"
-Type: files; Name: "{app}\kiosk.url"
 
 [Code]
 const
@@ -278,8 +274,6 @@ begin
     'POS_OPERATION_TIMEOUT_MS=40000' + #13#10, False);
   SaveStringToFile(App + '\devices.json',
     '{ "' + PosName + '": "' + PosIp + '" }' + #13#10, False);
-  SaveStringToFile(App + '\kiosk.url',
-    '[InternetShortcut]' + #13#10 + 'URL=http://localhost:' + ApiPort + '/' + #13#10, False);
 
   // Regla de entrada: el puerto del POS solo desde la IP del terminal.
   Exec(ExpandConstant('{sys}\netsh.exe'), 'advfirewall firewall delete rule name="' + FirewallRule + '"', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);

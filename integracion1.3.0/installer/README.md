@@ -30,7 +30,7 @@ Qué valida: nombre sin forma de IP, IP válida, puerto del POS entre 1024 y 327
 
 ## Qué deja instalado
 
-En `C:\Program Files\POS Integrador`: el integrador, `node\node.exe`, `POSIntegrador.exe` (WinSW) y su `.xml`, `.env`, `devices.json`, `logs\` y `kiosk.url`; el servicio `POSIntegrador` con arranque automático y reinicio ante fallos; la regla de firewall `POS Integrador`; un acceso directo al kiosk en el escritorio.
+En `C:\Program Files\POS Integrador`: el integrador, `node\node.exe`, `POSIntegrador.exe` (WinSW) y su `.xml`, `.env`, `devices.json`, y `logs\`; el servicio `POSIntegrador` con arranque automático y reinicio ante fallos; la regla de firewall `POS Integrador`. No crea accesos directos: la página de pruebas está en `http://localhost:<puerto de la API>/` (usar montos pequeños).
 
 Actualizar: ejecutar la versión nueva encima; detiene el servicio, reemplaza archivos y reescribe `.env` y `devices.json` con los valores ingresados. Desinstalar: desde Aplicaciones de Windows; quita el servicio, la regla, `.env`, `devices.json` y `logs`.
 

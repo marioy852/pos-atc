@@ -12,7 +12,6 @@ Que hace este instalador:
 - Guarda su configuracion en los archivos .env y devices.json.
 - Registra el servicio de Windows "POSIntegrador" con arranque automatico.
 - Crea una regla de firewall que permite el puerto del POS solo desde la IP del terminal.
-- Deja un acceso directo al kiosk en el escritorio.
 
 Despues de instalar, configure el terminal POS con la IP de ESTE PC y el puerto del POS, y reinicielo. El terminal puede tardar hasta 2 minutos en conectar.
 
