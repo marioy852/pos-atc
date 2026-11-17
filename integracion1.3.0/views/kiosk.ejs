@@ -174,7 +174,11 @@
             const reference = document.getElementsByName('reference')[0].value;
             try {
                 document.getElementById("dispositivo").innerHTML = "Anulación";
-                const response = await fetch(`/anular/${device}/${reference}`);
+                const response = await fetch(`/anular`, {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ device: device, reference: reference })
+                });
                 if (!response.ok) {
                     throw new Error('Error al anular la transacción');
                 }
@@ -198,7 +202,11 @@
             const device = document.getElementById('client').value;
             try {
                 document.getElementById("dispositivo").innerHTML = "Cierre de lote";
-                const response = await fetch(`/cerrar/${device}`);
+                const response = await fetch(`/cerrar`, {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ device: device })
+                });
                 if (!response.ok) {
                     throw new Error('Error al cerrar el lote');
                 }
@@ -215,24 +223,6 @@
             } catch (error) {
                 console.error('Error:', error);
                 alert('Error al cerrar el lote');
-            }
-        }
-
-        async function inicializar() {
-            document.getElementById("dispositivo").innerHTML = "";
-            const device = document.getElementById('client').value;
-            try {
-                document.getElementById("dispositivo").innerHTML = "Inicializacion";
-                const response = await fetch(`/initialize/${device}`);
-                if (!response.ok) {
-                    throw new Error('Error al inicializar');
-                }
-                const data = await response.json();
-                document.getElementById("message").innerHTML = data.message;
-                alert(data.message);
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al inicializar');
             }
         }
 
