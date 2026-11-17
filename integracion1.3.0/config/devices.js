@@ -73,9 +73,17 @@ function resolveConfiguredDevice(identifier) {
   return null;
 }
 
+// Con un solo POS en devices.json, "device" puede omitirse en la petición.
+// shortcut: con varios POS devuelve null y "device" vuelve a ser obligatorio.
+function getDefaultDevice() {
+  const names = Object.keys(deviceByName);
+  return names.length === 1 ? resolveConfiguredDevice(names[0]) : null;
+}
+
 module.exports = {
   cargarDispositivosDesdeArchivo,
   resolveConfiguredDevice,
+  getDefaultDevice,
   // getters para siempre exponer el valor vigente, ya que estas
   // variables se reasignan al cargar/recargar devices.json
   get devicesConfig() {

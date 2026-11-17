@@ -27,17 +27,18 @@ const typePayField = yup
   .oneOf(["chip", "ctl"], "Tipo de pago no válido");
 
 
+// "device" es opcional: validate.js usa el único POS configurado si falta.
 const anularSchema = yup.object({
-  device: deviceField.required("Campo device es requerido"),
+  device: deviceField,
   reference: referenceField.required("La referencia es requerida"),
 });
 
 const cerrarSchema = yup.object({
-  device: deviceField.required("Campo device es requerido"),
+  device: deviceField,
 });
 
 const pagoSchema = yup.object({
-  device: deviceField.required("Campo device es requerido"),
+  device: deviceField,
   typePay: typePayField.required("El tipo de pago es requerido"),
   importe: importeField.required("El monto es requerido"),
 });

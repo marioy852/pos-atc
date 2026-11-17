@@ -11,8 +11,11 @@ function validateBody(schema) {
       const validated = await schema.validate(req.body, { abortEarly: true });
       req.body = { ...req.body, ...validated };
 
-      if (validated.device) {
-        req.posDevice = devices.resolveConfiguredDevice(validated.device);
+      req.posDevice = validated.device
+        ? devices.resolveConfiguredDevice(validated.device)
+        : devices.getDefaultDevice();
+      if (!req.posDevice) {
+        return res.status(400).send({ error: "Campo device es requerido" });
       }
 
       next();
